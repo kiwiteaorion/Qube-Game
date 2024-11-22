@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Square Battle</title>
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="dashboard-page">
+    <div class="theme-switch">
+      <button id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+
+    <div class="dashboard-container">
+      <nav class="dashboard-nav">
+        <div class="user-profile">
+          <div class="avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <span id="username-display"></span>
+        </div>
+        <div class="balance-display">
+          <h3>Balance</h3>
+          <span id="balance-amount">$0.00</span>
+          <button id="add-funds-btn" class="add-funds-button">
+            <i class="fas fa-plus-circle"></i> Add Funds
+          </button>
+        </div>
+        <div class="nav-links">
+          <a href="dashboard.html" class="nav-button">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+          <a href="match.html" class="nav-button">
+            <i class="fas fa-gamepad"></i> Join Match
+          </a>
+          <a href="leaderboard.html" class="nav-button">
+            <i class="fas fa-trophy"></i> Leaderboard
+          </a>
+          <a href="settings.html" class="nav-button">
+            <i class="fas fa-cog"></i> Settings
+          </a>
+          <button id="logout-btn" class="nav-button logout-button">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </nav>
+
+      <main class="dashboard-main">
+        <div class="stats-container">
+          <div class="stat-card">
+            <h3>Matches Played</h3>
+            <span>0</span>
+          </div>
+          <div class="stat-card">
+            <h3>Wins</h3>
+            <span>0</span>
+          </div>
+          <div class="stat-card">
+            <h3>Win Rate</h3>
+            <span>0%</span>
+          </div>
+        </div>
+
+        <div class="recent-matches">
+          <h2>Recent Matches</h2>
+          <div class="matches-list">
+            <p class="no-matches">No recent matches played</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Add Funds</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="payment-methods">
+            <button class="payment-method" data-method="card">
+              <i class="fas fa-credit-card"></i>
+              <span>Credit/Debit Card</span>
+            </button>
+            <button class="payment-method" data-method="paypal">
+              <i class="fab fa-paypal"></i>
+              <span>PayPal</span>
+            </button>
+            <button class="payment-method" data-method="bank">
+              <i class="fas fa-university"></i>
+              <span>Bank Transfer</span>
+            </button>
+          </div>
+          <div class="amount-input">
+            <label for="amount">Amount to Add</label>
+            <div class="amount-wrapper">
+              <span class="currency">$</span>
+              <input type="number" id="amount" min="5" step="5" value="10" />
+            </div>
+          </div>
+          <button id="proceed-payment" class="proceed-button">
+            Proceed to Payment
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../auth/database.js"></script>
+    <script src="../auth/auth.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const auth = new Auth();
+
+        // Check authentication
+        if (!auth.currentUser) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Display username
+        document.getElementById("username-display").textContent =
+          auth.currentUser;
+
+        // Theme toggle
+        initializeTheme();
+        document
+          .getElementById("theme-toggle")
+          .addEventListener("click", toggleTheme);
+
+        // Modal handling
+        const modal = document.getElementById("payment-modal");
+        const addFundsBtn = document.getElementById("add-funds-btn");
+        const closeBtn = document.querySelector(".close-modal");
+
+        addFundsBtn.onclick = () => {
+          modal.style.display = "flex";
+        };
+
+        closeBtn.onclick = () => {
+          modal.style.display = "none";
+        };
+
+        window.onclick = (event) => {
+          if (event.target === modal) {
+            modal.style.display = "none";
+          }
+        };
+
+        // Payment method selection
+        const paymentMethods = document.querySelectorAll(".payment-method");
+        paymentMethods.forEach((method) => {
+          method.addEventListener("click", () => {
+            paymentMethods.forEach((m) => m.classList.remove("selected"));
+            method.classList.add("selected");
+          });
+        });
+
+        // Proceed with payment
+        document
+          .getElementById("proceed-payment")
+          .addEventListener("click", () => {
+            const amount = document.getElementById("amount").value;
+            const selectedMethod = document.querySelector(
+              ".payment-method.selected"
+            );
+
+            if (!selectedMethod) {
+              alert("Please select a payment method");
+              return;
+            }
+
+            // Here you would integrate with a real payment processor
+            alert(
+              `Processing $${amount} payment via ${selectedMethod.dataset.method}`
+            );
+            modal.style.display = "none";
+          });
+
+        // Logout
+        document.getElementById("logout-btn").addEventListener("click", () => {
+          auth.logout();
+          window.location.href = "../index.html";
+        });
+      });
+
+      // Theme functions
+      function initializeTheme() {
+        const theme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", theme);
+        updateThemeIcon(theme);
+      }
+
+      function updateThemeIcon(theme) {
+        const icon = document.querySelector("#theme-toggle i");
+        icon.className = theme === "light" ? "fas fa-moon" : "fas fa-sun";
+      }
+
+      function toggleTheme() {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme");
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeIcon(newTheme);
+      }
+    </script>
+  </body>
+</html>

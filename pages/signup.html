@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Square Battle Game</title>
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="theme-switch">
+      <button id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+
+    <div class="auth-container">
+      <div class="auth-card">
+        <div id="signup-form">
+          <div class="auth-header">
+            <h1>Join Now</h1>
+            <p>Create your account</p>
+          </div>
+          <form class="auth-form">
+            <div class="form-group">
+              <label for="signup-username">Username</label>
+              <input type="text" id="signup-username" required />
+            </div>
+            <div class="form-group">
+              <label for="signup-email">Email</label>
+              <input type="email" id="signup-email" required />
+            </div>
+            <div class="form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" required />
+            </div>
+            <div class="form-group">
+              <label for="signup-confirm-password">Confirm Password</label>
+              <input type="password" id="signup-confirm-password" required />
+            </div>
+            <button type="button" id="signup-btn" class="auth-button">
+              Create Account
+            </button>
+          </form>
+          <div class="auth-links">
+            <p>Have an account? <a href="login.html">Sign in</a></p>
+            <p><a href="../index.html">Back to home</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../auth/database.js"></script>
+    <script src="../auth/auth.js"></script>
+    <script>
+      // Signup page specific JavaScript
+      document.addEventListener("DOMContentLoaded", () => {
+        const auth = new Auth();
+
+        document
+          .getElementById("signup-btn")
+          .addEventListener("click", async () => {
+            const username = document.getElementById("signup-username").value;
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
+            const confirmPassword = document.getElementById(
+              "signup-confirm-password"
+            ).value;
+
+            try {
+              if (password !== confirmPassword) {
+                throw new Error("Passwords do not match");
+              }
+              await auth.signup(username, email, password);
+              window.location.href = "game.html";
+            } catch (error) {
+              const errorDiv = document.createElement("div");
+              errorDiv.className = "error-message";
+              errorDiv.textContent = error.message;
+
+              const form = document.querySelector(".auth-form");
+              const existingError = form.querySelector(".error-message");
+              if (existingError) {
+                existingError.remove();
+              }
+              form.appendChild(errorDiv);
+            }
+          });
+      });
+    </script>
+  </body>
+</html>

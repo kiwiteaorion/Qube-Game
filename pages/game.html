@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Square Battle</title>
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="dashboard-page">
+    <div class="dashboard-container">
+      <nav class="dashboard-nav">
+        <div class="nav-links">
+          <a href="dashboard.html" class="nav-button">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+          <a href="match.html" class="nav-button">
+            <i class="fas fa-gamepad"></i> Join Match
+          </a>
+          <a href="leaderboard.html" class="nav-button">
+            <i class="fas fa-trophy"></i> Leaderboard
+          </a>
+          <a href="settings.html" class="nav-button">
+            <i class="fas fa-cog"></i> Settings
+          </a>
+          <button id="logout-btn" class="nav-button logout-button">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+          <div class="balance-display">
+            Balance: $<span id="balance-amount">0.00</span>
+            <a href="add-funds.html" class="add-funds-button">
+              <i class="fas fa-plus-circle"></i> Add Funds
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      <main class="dashboard-content">
+        <div class="stats-container">
+          <div class="stat-card">
+            <h3>Matches Played</h3>
+            <span>0</span>
+          </div>
+          <div class="stat-card">
+            <h3>Wins</h3>
+            <span>0</span>
+          </div>
+          <div class="stat-card">
+            <h3>Win Rate</h3>
+            <span>0%</span>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../auth/database.js"></script>
+    <script src="../auth/auth.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const auth = new Auth();
+        if (!auth.currentUser) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Display username
+        document.getElementById("username-display").textContent =
+          auth.currentUser;
+
+        // Handle logout
+        document.getElementById("logout-btn").addEventListener("click", () => {
+          auth.logout();
+          window.location.href = "../index.html";
+        });
+
+        // Add this event listener for the Add Funds button
+        document
+          .getElementById("add-funds-btn")
+          .addEventListener("click", () => {
+            window.location.href = "add-funds.html";
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Match - Square Battle</title>
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="match-page">
+    <div class="match-container">
+      <div class="match-header">
+        <div class="players-count">
+          Players: <span id="player-count">0</span>/10
+        </div>
+        <div class="countdown" id="countdown"></div>
+        <button id="back-btn" class="back-button">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </button>
+      </div>
+
+      <canvas id="gameCanvas"></canvas>
+
+      <div class="abilities-container">
+        <button class="ability-btn" data-ability="speed">
+          <i class="fas fa-bolt"></i> Speed Boost
+        </button>
+        <button class="ability-btn" data-ability="shield">
+          <i class="fas fa-shield-alt"></i> Shield
+        </button>
+        <button class="ability-btn" data-ability="size">
+          <i class="fas fa-expand"></i> Size Up
+        </button>
+      </div>
+    </div>
+
+    <script src="../js/match.js"></script>
+  </body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Funds - Square Battle</title>
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="funds-page">
+    <div class="dashboard-container">
+      <nav class="dashboard-nav">
+        <div class="nav-links">
+          <a href="dashboard.html" class="nav-button">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+          <a href="match.html" class="nav-button">
+            <i class="fas fa-gamepad"></i> Join Match
+          </a>
+          <a href="leaderboard.html" class="nav-button">
+            <i class="fas fa-trophy"></i> Leaderboard
+          </a>
+          <a href="settings.html" class="nav-button">
+            <i class="fas fa-cog"></i> Settings
+          </a>
+          <button id="logout-btn" class="nav-button logout-button">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </nav>
+
+      <div class="funds-container">
+        <div class="funds-header">
+          <h1>Add Funds to Your Account</h1>
+          <p>Choose your preferred payment method and amount</p>
+        </div>
+
+        <div class="payment-methods">
+          <div class="payment-option" data-method="card">
+            <div class="payment-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <h3>Credit/Debit Card</h3>
+            <p>Instant deposit with any card</p>
+          </div>
+
+          <div class="payment-option" data-method="paypal">
+            <div class="payment-icon">
+              <i class="fab fa-paypal"></i>
+            </div>
+            <h3>PayPal</h3>
+            <p>Fast and secure payment</p>
+          </div>
+
+          <div class="payment-option" data-method="bank">
+            <div class="payment-icon">
+              <i class="fas fa-university"></i>
+            </div>
+            <h3>Bank Transfer</h3>
+            <p>Direct from your bank account</p>
+          </div>
+        </div>
+
+        <div class="amount-selector">
+          <h2>Select Amount</h2>
+          <div class="amount-options">
+            <button class="amount-option" data-amount="10">$10</button>
+            <button class="amount-option" data-amount="25">$25</button>
+            <button class="amount-option" data-amount="50">$50</button>
+            <button class="amount-option" data-amount="100">$100</button>
+            <div class="custom-amount">
+              <span class="currency">$</span>
+              <input
+                type="number"
+                id="custom-amount"
+                placeholder="Custom amount"
+                min="1"
+                step="1"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="payment-summary">
+          <div class="summary-row">
+            <span>Amount:</span>
+            <span id="selected-amount">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Processing Fee:</span>
+            <span id="processing-fee">$0.00</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span id="total-amount">$0.00</span>
+          </div>
+        </div>
+
+        <button id="proceed-payment" class="proceed-button" disabled>
+          <i class="fas fa-lock"></i> Proceed to Payment
+        </button>
+      </div>
+    </div>
+
+    <script src="../auth/database.js"></script>
+    <script src="../auth/auth.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const auth = new Auth();
+        if (!auth.currentUser) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        const paymentOptions = document.querySelectorAll(".payment-option");
+        const amountOptions = document.querySelectorAll(".amount-option");
+        const customAmount = document.getElementById("custom-amount");
+        const proceedButton = document.getElementById("proceed-payment");
+        const selectedAmount = document.getElementById("selected-amount");
+        const processingFee = document.getElementById("processing-fee");
+        const totalAmount = document.getElementById("total-amount");
+
+        let selectedPayment = null;
+        let currentAmount = 0;
+
+        // Payment method selection
+        paymentOptions.forEach((option) => {
+          option.addEventListener("click", () => {
+            paymentOptions.forEach((opt) => opt.classList.remove("selected"));
+            option.classList.add("selected");
+            selectedPayment = option.dataset.method;
+            updateProceedButton();
+          });
+        });
+
+        // Amount selection
+        amountOptions.forEach((option) => {
+          option.addEventListener("click", () => {
+            amountOptions.forEach((opt) => opt.classList.remove("selected"));
+            option.classList.add("selected");
+            customAmount.value = "";
+            currentAmount = parseFloat(option.dataset.amount);
+            updateSummary();
+          });
+        });
+
+        // Custom amount handling
+        customAmount.addEventListener("input", () => {
+          amountOptions.forEach((opt) => opt.classList.remove("selected"));
+          currentAmount = parseFloat(customAmount.value) || 0;
+          updateSummary();
+        });
+
+        function updateSummary() {
+          const fee = currentAmount * 0.029 + 0.3; // Example processing fee
+          selectedAmount.textContent = `$${currentAmount.toFixed(2)}`;
+          processingFee.textContent = `$${fee.toFixed(2)}`;
+          totalAmount.textContent = `$${(currentAmount + fee).toFixed(2)}`;
+          updateProceedButton();
+        }
+
+        function updateProceedButton() {
+          proceedButton.disabled = !selectedPayment || currentAmount <= 0;
+        }
+
+        // Proceed button
+        proceedButton.addEventListener("click", () => {
+          // Here you would integrate with a real payment processor
+          alert(`Processing $${currentAmount} payment via ${selectedPayment}`);
+        });
+
+        // Logout
+        document.getElementById("logout-btn").addEventListener("click", () => {
+          auth.logout();
+          window.location.href = "../index.html";
+        });
+      });
+    </script>
+  </body>
+</html>

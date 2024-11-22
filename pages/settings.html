@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Square Battle</title>
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="settings-page">
+    <div class="dashboard-container">
+      <nav class="dashboard-nav">
+        <div class="nav-links">
+          <a href="dashboard.html" class="nav-button">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+          <a href="match.html" class="nav-button">
+            <i class="fas fa-gamepad"></i> Join Match
+          </a>
+          <a href="leaderboard.html" class="nav-button">
+            <i class="fas fa-trophy"></i> Leaderboard
+          </a>
+          <a href="settings.html" class="nav-button">
+            <i class="fas fa-cog"></i> Settings
+          </a>
+          <button id="logout-btn" class="nav-button logout-button">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </nav>
+
+      <div class="settings-container">
+        <div class="settings-header">
+          <h1>Settings</h1>
+          <p>Customize your experience</p>
+        </div>
+
+        <div class="settings-section">
+          <h2>Appearance</h2>
+          <div class="setting-option">
+            <label>Theme</label>
+            <div class="theme-selector">
+              <button class="theme-option" data-theme="light">
+                <i class="fas fa-sun"></i>
+                Light
+              </button>
+              <button class="theme-option" data-theme="dark">
+                <i class="fas fa-moon"></i>
+                Dark
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h2>Account Settings</h2>
+          <div class="setting-option">
+            <label>Email Notifications</label>
+            <label class="switch">
+              <input type="checkbox" id="email-notifications" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <button id="save-settings" class="save-button">Save Changes</button>
+      </div>
+    </div>
+
+    <script src="../auth/database.js"></script>
+    <script src="../auth/auth.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const auth = new Auth();
+        if (!auth.currentUser) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Theme handling
+        const themeOptions = document.querySelectorAll(".theme-option");
+        const currentTheme = localStorage.getItem("theme") || "light";
+
+        // Set initial active theme
+        document.documentElement.setAttribute("data-theme", currentTheme);
+        themeOptions.forEach((option) => {
+          if (option.dataset.theme === currentTheme) {
+            option.classList.add("active");
+          }
+        });
+
+        // Theme selection
+        themeOptions.forEach((option) => {
+          option.addEventListener("click", () => {
+            const newTheme = option.dataset.theme;
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+
+            // Update active state
+            themeOptions.forEach((opt) => opt.classList.remove("active"));
+            option.classList.add("active");
+          });
+        });
+
+        // Save settings
+        document
+          .getElementById("save-settings")
+          .addEventListener("click", () => {
+            const emailNotifications = document.getElementById(
+              "email-notifications"
+            ).checked;
+            // Save other settings as needed
+
+            // Show success message
+            alert("Settings saved successfully!");
+          });
+
+        // Logout
+        document.getElementById("logout-btn").addEventListener("click", () => {
+          auth.logout();
+          window.location.href = "../index.html";
+        });
+      });
+    </script>
+  </body>
+</html>
